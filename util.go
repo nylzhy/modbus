@@ -16,6 +16,31 @@ type RequestIns struct {
 	DataLength   uint16 `json:"datalength,omitempty"` //Modbus Data Length, 0-0x07D0(2000) for some FC, or 0-0x7D(125) for some FC
 }
 
+// DataIndex is a structure for index the data from modbus data for multi variable
+type DataIndex struct {
+	Tag        string  `json:"tag,omitempty"`
+	StartIndex uint    `json:"start_index,omitempty"`
+	EndIndex   uint    `json:"end_index,omitempty"`
+	DataType   uint8   `json:"data_type,omitempty"`
+	PT         uint    `json:"pt,omitempty"`
+	CT         uint    `json:"ct,omitempty"`
+	Offset     float64 `json:"offset,omitempty"` // value = (d-offset)*pt/ct
+	Value      float64 `json:"value,omitempty"`
+}
+
+// Cmd is a complete modbus instruction structure with tag name
+type Cmd struct {
+	Ri RequestIns
+	DI []DataIndex
+}
+
+//DevInfo Modbus Server/Slave 信息配置
+type DevInfo struct {
+	Name     string // 设备名称
+	Protocol uint8  // 协议选择
+	Addr     string // for rtu is slave id, for tcp is ip:port
+}
+
 // PLCRequestIns Request Instructions to make a ProtocolDataUnit (PDU) for client(TCP) or Master(RTU) with PLC mode
 // PLC Mode: 0/false is Read and 1/true is write
 // PLC Modbus 数据地址、数据长度与功能码关系表
