@@ -1,11 +1,6 @@
-go cmd modbus
+go modbus [![Build Status](https://travis-ci.org/goburrow/modbus.svg?branch=master)](https://travis-ci.org/goburrow/modbus) [![GoDoc](https://godoc.org/github.com/goburrow/modbus?status.svg)](https://godoc.org/github.com/goburrow/modbus)
 =========
-
-The project based on [goburrow/modbus](https://github.com/goburrow/modbus) add some new functions
-for Client for some situation which need more directly construct the modbus instructions. 
-
-Of course, you still can use the old methods/style as description in [godoc](https://godoc.org/github.com/goburrow/modbus). 
-
+Fault-tolerant, fail-fast implementation of Modbus protocol in Go.
 
 Supported functions
 -------------------
@@ -24,13 +19,6 @@ Bit access:
 *   Mask Write Register
 *   Read FIFO Queue
 
-Mix Mode:
-*   Exec(InsStru)
-
-PLC Mode:
-*   ExecPLC(PLCInsStru)
-
-
 Supported formats
 -----------------
 *   TCP
@@ -38,9 +26,20 @@ Supported formats
 
 Usage
 -----
+Basic usage:
+```go
+// Modbus TCP
+client := modbus.TCPClient("localhost:502")
+// Read input register 9
+results, err := client.ReadInputRegisters(8, 1)
 
-// 新建一个NewClient，初始各种参数，新建InsStru和PLCInsStru结构体，实现Exec函数
+// Modbus RTU/ASCII
+// Default configuration is 19200, 8, 1, even
+client = modbus.RTUClient("/dev/ttyS0")
+results, err = client.ReadCoils(2, 1)
+```
 
+Advanced usage:
 ```go
 // Modbus TCP
 handler := modbus.NewTCPClientHandler("localhost:502")
