@@ -4,6 +4,7 @@
 
 package modbus
 
+// Client Client is a modbus instruction cllection
 type Client interface {
 	// Bit access
 
@@ -46,4 +47,8 @@ type Client interface {
 	//ReadFIFOQueue reads the contents of a First-In-First-Out (FIFO) queue
 	// of register in a remote device and returns FIFO value register.
 	ReadFIFOQueue(address uint16) (results []byte, err error)
+	//Exec mix modbus instruction
+	Exec(i *InsStru) (results []byte, err error)
+	//ExecPLC mix modbus instruction with PLC style
+	ExecPLC(i *PLCInsStru) (results []byte, err error)
 }

@@ -43,6 +43,7 @@ func ASCIIClient(address string) Client {
 
 // asciiPackager implements Packager interface.
 type asciiPackager struct {
+	//SlaveId slave device bus address
 	SlaveId byte
 }
 

@@ -432,6 +432,77 @@ func (mb *client) ReadFIFOQueue(address uint16) (results []byte, err error) {
 	return
 }
 
+//Exec mix exec modbus instruction
+func (mb *client) Exec(i *InsStru) (result []byte, err error) {
+	switch i.FunctionCode {
+	case FuncCodeReadCoils:
+		return mb.ReadCoils(i.RegAddr, i.Length)
+	case FuncCodeReadDiscreteInputs:
+		return mb.ReadDiscreteInputs(i.RegAddr, i.Length)
+	case FuncCodeReadHoldingRegisters:
+		return mb.ReadHoldingRegisters(i.RegAddr, i.Length)
+	case FuncCodeReadInputRegisters:
+		return mb.ReadInputRegisters(i.RegAddr, i.Length)
+	case FuncCodeWriteSingleCoil:
+		return mb.WriteSingleCoil(i.RegAddr, uint16(i.DataBuf[0]))
+	case FuncCodeWriteSingleRegister:
+		return mb.WriteSingleRegister(i.RegAddr, uint16(i.DataBuf[0]))
+	case FuncCodeWriteMultipleCoils:
+		return mb.WriteMultipleCoils(i.RegAddr, i.Length, i.DataBuf)
+	default:
+		return nil, fmt.Errorf("no function code %v", i.FunctionCode)
+	}
+
+}
+
+//PLCExec mix exec modbus instruction with plc style
+func (mb *client) ExecPLC(i *PLCInsStru) (result []byte, err error) {
+	switch {
+	case 0 <= i.RegAddr && i.RegAddr <= 9999:
+		if i.RWMode {
+			if i.Length > 1 {
+				return mb.WriteMultipleCoils(uint16(i.RegAddr-1), i.Length, i.DataBuf)
+			}
+			return mb.WriteSingleCoil(uint16(i.Length-1), uint16(i.DataBuf[0]))
+		}
+		return mb.ReadCoils(uint16(i.RegAddr-1), i.Length)
+	case 10001 <= i.RegAddr && i.RegAddr <= 19999:
+		if i.RWMode {
+			return nil, fmt.Errorf("discrete inputs regiters address <%v> are only readable, which can't writen", i.RegAddr)
+		}
+		return mb.ReadDiscreteInputs(uint16(i.RegAddr-10001), i.Length)
+	case 40001 <= i.RegAddr && i.RegAddr <= 49999:
+		if i.RWMode {
+			if i.Length > 1 {
+				return mb.WriteSingleRegister(uint16(i.RegAddr-40001), uint16(i.DataBuf[0]))
+			}
+			return mb.WriteMultipleRegisters(uint16(i.RegAddr-40001), i.Length, i.DataBuf)
+		}
+		return mb.ReadHoldingRegisters(uint16(i.RegAddr-40001), i.Length)
+	case 400001 <= i.RegAddr && i.RegAddr <= 465535:
+		if i.RWMode {
+			if i.Length > 1 {
+				return mb.WriteSingleRegister(uint16(i.RegAddr-400001), uint16(i.DataBuf[0]))
+			}
+			return mb.WriteMultipleRegisters(uint16(i.RegAddr-400001), i.Length, i.DataBuf)
+		}
+		return mb.ReadHoldingRegisters(uint16(i.RegAddr-400001), i.Length)
+	case 30001 <= i.RegAddr && i.RegAddr <= 39999:
+		if i.RWMode {
+			return nil, fmt.Errorf("inputs regiters address <%v> are only readable, which can't be writen", i.RegAddr)
+		}
+		return mb.ReadInputRegisters(uint16(i.RegAddr-30001), i.Length)
+
+	case 20001 <= i.RegAddr && i.RegAddr <= 29999:
+		if i.RWMode {
+			return nil, fmt.Errorf("inputs regiters address <%v> are only readable, which can't be writen", i.RegAddr)
+		}
+		return mb.ReadInputRegisters(uint16(i.RegAddr-20001), i.Length)
+	default:
+		return nil, fmt.Errorf("data address %v can't be handled", i.RegAddr)
+	}
+}
+
 // Helpers
 
 // send sends request and checks possible exception in the response.

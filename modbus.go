@@ -91,3 +91,32 @@ type Packager interface {
 type Transporter interface {
 	Send(aduRequest []byte) (aduResponse []byte, err error)
 }
+
+//InsStru modbus instruction structure with normal style of pdu
+type InsStru struct {
+	FunctionCode uint16 `json:"function_code,omitempty"`
+	RegAddr      uint16 `json:"reg_addr,omitempty"`
+	Length       uint16 `json:"length,omitempty"`
+	DataBuf      []byte `json:"data_buf,omitempty"`
+}
+
+//RInsStru modbus read instruction structure with normal style of pdu
+type RInsStru struct {
+	FunctionCode uint16 `json:"function_code,omitempty"`
+	RegAddr      uint16 `json:"reg_addr,omitempty"`
+	Length       uint16 `json:"length,omitempty"`
+}
+
+//PLCInsStru modbus instruction structure with PLC style of pdu
+type PLCInsStru struct {
+	RWMode  bool   `json:"rw_mode"`
+	RegAddr uint   `json:"reg_addr,omitempty"`
+	Length  uint16 `json:"length,omitempty"`
+	DataBuf []byte `json:"data_buf,omitempty"`
+}
+
+//PLCRInsStru modbus read instruction structure with PLC style of pdu
+type PLCRInsStru struct {
+	RegAddr uint   `json:"reg_addr,omitempty"`
+	Length  uint16 `json:"length,omitempty"`
+}

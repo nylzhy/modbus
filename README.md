@@ -42,6 +42,25 @@ Usage
 // 新建一个NewClient，初始各种参数，新建InsStru和PLCInsStru结构体，实现Exec函数
 
 ```go
+type InsStru struct{
+	FunctionCode uint16 //Modbus function code
+	RegAddr uint16	//register start addr
+	Length uint16 //read/write length
+	DataBuf []byte //write data buffer
+}
+
+type PLCInsStru struct {
+	RWMode  bool //false means read, and true means write
+	RegAddr uint //register start addr
+	Length  uint16 //read/write length
+	DataBuf []byte //write data buffer
+}
+
+```
+
+
+
+```go
 // Modbus TCP
 handler := modbus.NewTCPClientHandler("localhost:502")
 handler.Timeout = 10 * time.Second
