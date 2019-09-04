@@ -1,45 +1,29 @@
 go cmd modbus
 =========
 
-The project base on [goburrow/modbus](https://github.com/goburrow/modbus), and add some new functions
-for some situation which need more directly construct the modbus instructions. 
+[English](https://github.com/nylzhy/modbus/README.md),[中文](https://github.com/nylzhy/modbus/README_ZH.md)
 
-Of course, you still can use the old methods/style as description in [godoc](https://godoc.org/github.com/goburrow/modbus). 
+这个项目是基于 [goburrow/modbus](https://github.com/goburrow/modbus) 而建立的，并且为更加直接地利用modbus指令添加新的特性。当然，你仍然可以利用原来地方法或风格去使用该包，详情参见[godoc](https://godoc.org/github.com/goburrow/modbus).
 
-
-Supported functions
+支持的功能
 -------------------
-Bit access:
-*   Read Discrete Inputs
-*   Read Coils
-*   Write Single Coil
-*   Write Multiple Coils
+位访问:
+*   读取离散输入状态
+*   读取线圈状态
+*   写入单个线圈
+*   写入多个线圈
 
-16-bit access:
-*   Read Input Registers
-*   Read Holding Registers
-*   Write Single Register
-*   Write Multiple Registers
-*   Read/Write Multiple Registers
-*   Mask Write Register
-*   Read FIFO Queue
+字节访问:
+*   读取输入寄存器
+*   读取保持寄存器
+*   写单个保持寄存器
+*   写多个保持寄存器
+*   读写多个寄存器
+*   Mask写寄存器
+*   读取队列
 
-Mix Mode:
+混合访问模式:
 *   Exec(InsStru)
-
-PLC Mode:
-*   ExecPLC(PLCInsStru)
-
-
-Supported formats
------------------
-*   TCP
-*   Serial (RTU, ASCII)
-
-Usage
------
-
-// 新建一个NewClient，初始各种参数，新建InsStru和PLCInsStru结构体，实现Exec函数
 
 ```go
 type InsStru struct{
@@ -48,16 +32,29 @@ type InsStru struct{
 	Length uint16 //read/write length
 	DataBuf []byte //write data buffer
 }
+```
 
+带有PLC风格的混合访问模式:
+*   ExecPLC(PLCInsStru)
+
+```go
 type PLCInsStru struct {
 	RWMode  bool //false means read, and true means write
 	RegAddr uint //register starting addr
 	Length  uint16 //read/write length
 	DataBuf []byte //write data buffer
 }
-
 ```
 
+支持的协议
+-----------------
+*   TCP
+*   Serial (RTU, ASCII)
+
+用法
+-----
+
+// 新建一个NewClient，初始各种参数，新建InsStru和PLCInsStru结构体，实现Exec函数
 
 
 ```go
