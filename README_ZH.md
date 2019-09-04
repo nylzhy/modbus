@@ -1,7 +1,7 @@
 go cmd modbus
 =========
 
-[English](https://github.com/nylzhy/modbus/README.md),[中文](https://github.com/nylzhy/modbus/README_ZH.md)
+[English](https://github.com/nylzhy/modbus/README.md) [中文](https://github.com/nylzhy/modbus/README_ZH.md)
 
 这个项目是基于 [goburrow/modbus](https://github.com/goburrow/modbus) 而建立的，并且为更加直接地利用modbus指令添加新的特性。当然，你仍然可以利用原来地方法或风格去使用该包，详情参见[godoc](https://godoc.org/github.com/goburrow/modbus).
 
@@ -27,10 +27,10 @@ go cmd modbus
 
 ```go
 type InsStru struct{
-	FunctionCode uint16 //Modbus function code
-	RegAddr uint16	//register starting addr
-	Length uint16 //read/write length
-	DataBuf []byte //write data buffer
+	FunctionCode uint16 //Modbus 功能码
+	RegAddr uint16	//寄存器起始地址
+	Length uint16 //数据读写长度
+	DataBuf []byte //读写缓存数据
 }
 ```
 
@@ -39,10 +39,10 @@ type InsStru struct{
 
 ```go
 type PLCInsStru struct {
-	RWMode  bool //false means read, and true means write
-	RegAddr uint //register starting addr
-	Length  uint16 //read/write length
-	DataBuf []byte //write data buffer
+	RWMode  bool //false为读数据，true为写数据
+	RegAddr uint //PLC风格的寄存器起始地址
+	Length  uint16 //数据读写长度
+	DataBuf []byte //读写缓存数据
 }
 ```
 
@@ -90,6 +90,7 @@ client := modbus.NewClient(handler)
 results, err := client.ReadDiscreteInputs(15, 2)
 ```
 
-References
+参考
 ----------
--   [Modbus Specifications and Implementation Guides](http://www.modbus.org/specs.php)
+-   [Modbus 协议规范及实现指导](http://www.modbus.org/specs.php)
+-   [Siemens 1200/1500 Modbus RTU](https://support.industry.siemens.com/cs/document/109477716/s7-1500-modbus-rtu%E4%BD%BF%E7%94%A8%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8(%E6%9B%B4%E6%96%B0%E7%89%88)?dti=0&lc=zh-CN)

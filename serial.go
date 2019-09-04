@@ -19,6 +19,21 @@ const (
 	serialIdleTimeout = 60 * time.Second
 )
 
+// Serial Parameter config
+type Serial struct {
+	//Serial Port Path or Name
+	Port string
+	// Baudrate
+	BaudRate int
+	//DataBits Parity StopBits, "8E1" means 8 Data bits, Even Parity and 1 Stop bits
+	// Data bits: 5, 6, 7 or 8
+	// Parity: N - None, E - Even, O - Odd
+	// Stop bits: 1 or 2
+	DPS string
+	//Read/Write Time out 3s
+	Timeout string
+}
+
 // serialPort has configuration and I/O controller.
 type serialPort struct {
 	// Serial port configuration.

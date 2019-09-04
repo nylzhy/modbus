@@ -8,6 +8,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -33,6 +35,54 @@ func NewRTUClientHandler(address string) *RTUClientHandler {
 	return handler
 }
 
+// NewRTUClienter creates RTU client with serial infomation
+func NewRTUClienter(s *Serial) (Client, error) {
+	handler := &RTUClientHandler{}
+	handler.Address = s.Port //
+
+	switch s.BaudRate {
+	case 300, 600, 1200, 1800, 2400, 4800, 7200, 9600, 14400, 19200, 38400, 57600, 115200:
+		handler.BaudRate = s.BaudRate
+	default:
+		return nil, fmt.Errorf("%v is not a valid baudrate number", s.BaudRate)
+	}
+
+	n, err := str2int(s.DPS[0:1])
+	if err != nil || (n < 5 && n > 8) {
+		return nil, fmt.Errorf("%s is not a valid Databits number, %v", s.DPS[0:1], err)
+	}
+	handler.DataBits = n
+
+	switch strings.ToUpper(s.DPS[1:2]) {
+	case "N", "E", "O":
+		handler.Parity = strings.ToUpper(s.DPS[1:2])
+	default:
+		return nil, fmt.Errorf("%s is not a valid Parity method", s.DPS[1:2])
+	}
+
+	n, err = str2int(s.DPS[2:3])
+	if err != nil || (n < 1 && n > 2) {
+		return nil, fmt.Errorf("%s is not a valid Stopbits number, %s", s.DPS[2:3], err)
+	}
+	handler.StopBits = n
+
+	handler.Timeout, err = time.ParseDuration(s.Timeout)
+	if err != nil {
+		return nil, fmt.Errorf("%s is not a valid time duration", s.Timeout)
+	}
+
+	return NewClient(handler), nil
+
+}
+
+func str2int(s string) (int, error) {
+	n, err := strconv.ParseInt(s, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("can't convert %v to a suit number", s)
+	}
+	return int(n), nil
+}
+
 // RTUClient creates RTU client with default handler and given connect string.
 func RTUClient(address string) Client {
 	handler := NewRTUClientHandler(address)
@@ -41,7 +91,7 @@ func RTUClient(address string) Client {
 
 // rtuPackager implements Packager interface.
 type rtuPackager struct {
-	SlaveId byte
+	SlaveID byte
 }
 
 // Encode encodes PDU in a RTU frame:
@@ -57,7 +107,7 @@ func (mb *rtuPackager) Encode(pdu *ProtocolDataUnit) (adu []byte, err error) {
 	}
 	adu = make([]byte, length)
 
-	adu[0] = mb.SlaveId
+	adu[0] = mb.SlaveID
 	adu[1] = pdu.FunctionCode
 	copy(adu[2:], pdu.Data)
 

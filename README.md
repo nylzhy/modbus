@@ -1,6 +1,8 @@
 go cmd modbus
 =========
 
+[English](https://github.com/nylzhy/modbus/README.md) [中文](https://github.com/nylzhy/modbus/README_ZH.md)
+
 The project base on [goburrow/modbus](https://github.com/goburrow/modbus), and add some new functions
 for some situation which need more directly construct the modbus instructions. 
 
@@ -27,8 +29,26 @@ Bit access:
 Mix Mode:
 *   Exec(InsStru)
 
+
+```go
+type InsStru struct{
+	FunctionCode uint16 //Modbus function code
+	RegAddr uint16	//register starting addr
+	Length uint16 //read/write length
+	DataBuf []byte //write data buffer
+}
+```
+
 PLC Mode:
 *   ExecPLC(PLCInsStru)
+```go
+type PLCInsStru struct {
+	RWMode  bool //false means read, and true means write
+	RegAddr uint //register starting addr
+	Length  uint16 //read/write length
+	DataBuf []byte //write data buffer
+}
+```
 
 
 Supported formats
@@ -39,24 +59,9 @@ Supported formats
 Usage
 -----
 
-// 新建一个NewClient，初始各种参数，新建InsStru和PLCInsStru结构体，实现Exec函数
 
-```go
-type InsStru struct{
-	FunctionCode uint16 //Modbus function code
-	RegAddr uint16	//register starting addr
-	Length uint16 //read/write length
-	DataBuf []byte //write data buffer
-}
 
-type PLCInsStru struct {
-	RWMode  bool //false means read, and true means write
-	RegAddr uint //register starting addr
-	Length  uint16 //read/write length
-	DataBuf []byte //write data buffer
-}
 
-```
 
 
 
